@@ -24,7 +24,7 @@ import type { TranslationKey, PoseKey } from './lib/translations';
 import ImageModificationPanel from './components/ImageModificationPanel';
 import { addLookbookItem, getLookbookItems, deleteLookbookItem, LookbookItemRecord, getWardrobeItems, addWardrobeItem, deleteWardrobeItem as deleteWardrobeItemFromDb } from './lib/db';
 import Toolbar from './components/Toolbar';
-import { getStyleLookForOccasion } from './services/styleOutfits';
+import { buildOccasionBrief, type StylingPreferences } from './styleCatalog';
 
 import * as realGeminiService from './services/geminiService';
 import * as mockGeminiService from './services/geminiService.mock';
@@ -177,7 +177,7 @@ const App: React.FC = () => {
     return allPoseImages;
   }, [t]);
 
-  const executeGenerateOutfitForOccasion = useCallback(async (baseModelLayer: OutfitLayer, occasionKey: OccasionKey) => {
+  const executeGenerateOutfitForOccasion = useCallback(async (baseModelLayer: OutfitLayer, occasionKey: OccasionKey, preferences: StylingPreferences = {}) => {
     setError(null);
     setIsLoading(true);
     setLoadingMessage(language === 'fr' ? 'Conception haute couture du look...' : t('generatingLook'));
@@ -186,26 +186,10 @@ const App: React.FC = () => {
       const occasionLabel = t(occasionKey) || occasionKey;
       const baseImage = baseModelLayer.poseImages['pose_default'];
       
-      let newDefaultPoseUrl: string;
-      let existingPoses: Partial<Record<PoseKey, string>> = {};
-
-      if (!baseImage) {
-        // Repli si pas d'image de base
-        const lookCollection = getStyleLookForOccasion(occasionKey);
-        newDefaultPoseUrl = lookCollection.defaultImage;
-        existingPoses = lookCollection.poseImages;
-      } else {
-        // Appel à l'IA pour générer la tenue SUR LA PHOTO DE L'UTILISATEUR
-        newDefaultPoseUrl = await apiService.generateOutfitForOccasion(baseImage, occasionLabel);
-        
-        // Si l'API renvoie un repli stock (épuisement quota/pas de clé API), on récupère les poses pré-générées du stock
-        const lookCollection = getStyleLookForOccasion(occasionKey);
-        if (newDefaultPoseUrl === lookCollection.defaultImage) {
-           existingPoses = lookCollection.poseImages;
-        } else {
-           existingPoses = {};
-        }
-      }
+      if (!baseImage) throw new Error('errorStylingMissingPhoto');
+      const brief = buildOccasionBrief(occasionKey, occasionLabel, preferences);
+      const newDefaultPoseUrl = await apiService.generateOutfitForOccasion(baseImage, brief);
+      const existingPoses: Partial<Record<PoseKey, string>> = {};
 
       setLoadingMessage(language === 'fr' ? 'Génération des angles & attitudes...' : t('generatingVariations'));
 
@@ -384,10 +368,10 @@ const App: React.FC = () => {
     setCurrentPoseKey(newPoseKey);
   };
 
-  const handleGenerateOutfitForOccasion = useCallback(async (occasionKey: OccasionKey) => {
+  const handleGenerateOutfitForOccasion = useCallback(async (occasionKey: OccasionKey, preferences: StylingPreferences = {}) => {
     if (isLoading || outfitHistory.length === 0) return;
     const baseModelLayer = outfitHistory[0];
-    await executeGenerateOutfitForOccasion(baseModelLayer, occasionKey);
+    await executeGenerateOutfitForOccasion(baseModelLayer, occasionKey, preferences);
   }, [isLoading, outfitHistory, executeGenerateOutfitForOccasion]);
 
   const handleImageModification = useCallback(async (prompt: string) => {

@@ -16,7 +16,7 @@ import {
 import CustomImageSlider from './CustomImageSlider';
 import { useLocalization } from '../contexts/LocalizationContext';
 import type { PoseKey } from '../lib/translations';
-import { OccasionKey } from '../occasions';
+import { occasionOptions, OccasionKey } from '../occasions';
 
 interface StartScreenProps {
   onModelFinalized: (allPoseImages: Partial<Record<PoseKey, string>>, directOccasion?: OccasionKey) => void;
@@ -311,7 +311,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onModelFinalized }) => {
                             Ou entrer dans le dressing complet
                           </div>
                           <div className="text-[10px] text-stone-500">
-                            Choisir parmi les 75+ styles et la garde-robe
+                            Choisir parmi {occasionOptions.length} occasions, activités et styles, et la garde-robe
                           </div>
                         </div>
                       </div>
