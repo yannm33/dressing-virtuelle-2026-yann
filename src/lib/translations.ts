@@ -5,6 +5,7 @@
 
 export const translations = {
   en: {
+    shopping: 'Shops',
     errorStylingMissingKey: "Outfit generation is unavailable: configure the API key first.",
     errorStylingMissingPhoto: "Add a model photo before generating an outfit.",
     // Header
@@ -415,6 +416,7 @@ export const translations = {
     mockModeActive: "Mock Active",
   },
   fr: {
+    shopping: 'Boutiques',
     errorStylingMissingKey: "La génération de tenues est indisponible : configurez d’abord la clé API.",
     errorStylingMissingPhoto: "Ajoutez une photo du modèle avant de générer une tenue.",
     // Header

@@ -17,6 +17,7 @@ import { useLocalization } from './contexts/LocalizationContext';
 import Header from './components/Header';
 import ShareModal from './components/ShareModal';
 import OccasionStylingPanel from './components/OccasionStylingPanel';
+import ShoppingPanel from './components/ShoppingPanel';
 import LookbookPanel from './components/LookbookPanel';
 import { OccasionKey } from './occasions';
 import { translations } from './lib/translations';
@@ -46,7 +47,7 @@ const viewAnimation: MotionProps = {
   transition: { duration: 0.5, ease: 'easeInOut' },
 };
 
-type Tab = 'stylist' | 'outfit' | 'wardrobe' | 'lookbook';
+type Tab = 'stylist' | 'outfit' | 'wardrobe' | 'lookbook' | 'shopping';
 
 const POSE_KEYS_TO_GENERATE: PoseKey[] = [
   'pose_3_4',
@@ -460,6 +461,7 @@ const App: React.FC = () => {
     { id: 'outfit', label: 'myOutfit' },
     { id: 'wardrobe', label: 'wardrobe' },
     { id: 'lookbook', label: 'lookbook' },
+    { id: 'shopping', label: 'shopping' },
   ];
 
   return (
@@ -568,6 +570,7 @@ const App: React.FC = () => {
                         </div>
                       )}
                       {activeTab === 'wardrobe' && <WardrobePanel onGarmentSelect={handleGarmentSelect} onAddNewItem={handleAddNewItemToWardrobe} onDeleteItem={handleDeleteWardrobeItem} activeGarmentIds={activeGarmentIds} isLoading={isLoading} wardrobe={wardrobe} />}
+                      {activeTab === 'shopping' && <ShoppingPanel isLoading={isLoading} onTryOn={handleGarmentSelect} />}
                       {activeTab === 'lookbook' && <LookbookPanel items={lookbookItems} onDeleteItem={handleDeleteFromLookbook} />}
                     </motion.div>
                   </AnimatePresence>
