@@ -156,37 +156,27 @@ Return ONLY the image.`;
 };
 
 export const generateVirtualTryOnImage = async (modelImageUrl: string, garmentImage: File): Promise<string> => {
-    if (apiKey !== 'dummy_key') {
-        try {
-            const cleanModelUrl = await ensureDataUrl(modelImageUrl);
-            const modelImagePart = dataUrlToPart(cleanModelUrl);
-            const garmentImagePart = await fileToPart(garmentImage);
-            const prompt = `Act as a master digital tailor.
-TASK: Photorealistically apply the garment from the second image onto the person in the first portrait.
-RULES:
-1. PRESERVE PORTRAIT: Maintain exact face, pose, and vertical portrait aspect ratio.
-2. TEXTURE: Recalculate lighting and shadows on the fabric to look 100% real.
-3. SEAMLESS: Ensure clean edges and perfect fit to the body contours.
-Return ONLY the edited portrait.`;
-            const res = await callApiWithRetry(() => ai.models.generateContent({
-                model: MODEL_NAME,
-                contents: { parts: [modelImagePart, garmentImagePart, { text: prompt }] },
-                config: { 
-                    responseModalities: [Modality.IMAGE],
-                    imageConfig: { aspectRatio: "3:4" }
-                },
-            }));
-            if (res) return res;
-        } catch (e) {
-            console.warn("generateVirtualTryOnImage failed, using fallback:", e);
-        }
-    }
-
-    if (modelImageUrl.startsWith('data:')) {
-        return modelImageUrl;
-    }
-
-    return lookCasualWeekend;
+    if (apiKey === 'dummy_key') throw new Error('errorStylingMissingKey');
+    if (!modelImageUrl) throw new Error('errorStylingMissingPhoto');
+    const cleanModelUrl = await ensureDataUrl(modelImageUrl);
+    const modelImagePart = dataUrlToPart(cleanModelUrl);
+    const garmentImagePart = await fileToPart(garmentImage);
+    const prompt = [
+        'Act as a professional virtual fitting stylist.',
+        'Apply the garment shown in the second image onto the person in the first image.',
+        'Preserve the exact face, hair, body shape, pose and background of the person.',
+        'Preserve the reference garment color, cut, pattern and details. Do not invent a different product.',
+        'Keep other worn garments unless the requested garment replaces the same clothing layer.',
+        'Use realistic fabric folds, lighting and shadows with vertical portrait framing.',
+        'This is a visual simulation, not a guarantee of actual size or fit.',
+        'Return ONLY the edited portrait.'
+    ].join('\n');
+    // Never present an unchanged photo or stock model as a successful fitting.
+    return callApiWithRetry(() => ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: { parts: [modelImagePart, garmentImagePart, { text: prompt }] },
+        config: { responseModalities: [Modality.IMAGE], imageConfig: { aspectRatio: "3:4" } },
+    }));
 };
 
 export const generatePoseVariation = async (tryOnImageUrl: string, poseInstruction: string): Promise<string> => {

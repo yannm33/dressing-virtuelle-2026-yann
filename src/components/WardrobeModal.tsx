@@ -94,11 +94,10 @@ const WardrobePanel: React.FC<WardrobePanelProps> = ({ onGarmentSelect, onAddNew
         }
     };
 
-    const handleSaveNewItem = (details: Parameters<WardrobePanelProps['onAddNewItem']>[0]) => {
-        if (itemToAdd) {
-            onAddNewItem(details, itemToAdd.file);
-            setItemToAdd(null);
-        }
+    const handleSaveNewItem = (details: Parameters<WardrobePanelProps['onAddNewItem']>[0], file: File) => {
+        onAddNewItem(details, file);
+        if (itemToAdd) URL.revokeObjectURL(itemToAdd.previewUrl);
+        setItemToAdd(null);
     };
     
     const handleCategoryChange = (category: WardrobeCategory | 'All') => {
@@ -240,7 +239,8 @@ const WardrobePanel: React.FC<WardrobePanelProps> = ({ onGarmentSelect, onAddNew
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleSaveNewItem}
-        imagePreviewUrl={itemToAdd?.previewUrl || null}
+        initialImagePreviewUrl={itemToAdd?.previewUrl || null}
+        initialFile={itemToAdd?.file || null}
         existingCategories={categories.filter(c => c !== 'All')}
       />
     </div>

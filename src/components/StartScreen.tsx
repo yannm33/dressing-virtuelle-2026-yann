@@ -212,7 +212,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onModelFinalized }) => {
                   <button
                     id="btn-atelier-demo"
                     type="button"
-                    onClick={handleEnterDressingWithDemo}
+                    onClick={() => handleEnterDressingWithDemo()}
                     className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-50/40 via-white/50 to-rose-50/35 hover:from-emerald-50/70 hover:via-white/70 hover:to-rose-50/60 border border-emerald-200/70 hover:border-emerald-300 transition-all duration-300 text-left group active:scale-[0.99] shadow-xs hover:shadow-md backdrop-blur-xs"
                   >
                     <div className="flex items-center gap-3">
