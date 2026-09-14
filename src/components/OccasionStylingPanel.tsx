@@ -6,299 +6,39 @@
 import React, { useState, useMemo } from 'react';
 import { useLocalization } from '../contexts/LocalizationContext';
 import { occasionOptions, OccasionKey } from '../occasions';
+import { CATEGORY_MAP, getOccasionCategory, normalizeStyleSearch, preferenceOptions, type StyleCategory, type StylingPreferences } from '../styleCatalog';
 import Spinner from './Spinner';
 import { SparklesIcon, CheckCircleIcon } from './icons';
 import { motion } from 'framer-motion';
 
 interface OccasionStylingPanelProps {
-  onGenerateOutfit: (occasionKey: OccasionKey) => void;
+  onGenerateOutfit: (occasionKey: OccasionKey, preferences: StylingPreferences) => void;
   isLoading: boolean;
   numImagesToGenerate: number;
   onNumImagesChange: (num: number) => void;
 }
 
-type StyleCategory = 'all' | 'cat_noel' | 'cat_plongee' | 'cat_fitness' | 'cat_yoga' | 'cat_running' | 'cat_raquette' | 'cat_velo' | 'cat_montagne' | 'cat_rando' | 'cat_nautisme' | 'cat_equitation' | 'cat_danse' | 'cat_festival' | 'cat_mariage' | 'cat_rendezvous' | 'cat_voyage' | 'cat_maison' | 'cat_jardin' | 'cat_culture' | 'cat_pro' | 'cat_fete' | 'cat_grossesse' | 'cat_adapte';
-
-const CATEGORY_MAP: Record<StyleCategory, { label: string; icon: string; keys: OccasionKey[] }> = {
-  all: {
-    label: "Tous les styles",
-    icon: "✨",
-    keys: [...occasionOptions],
-  },
-  cat_noel: {
-    label: "Noël & fêtes",
-    icon: "🎄",
-    keys: [
-      'cat_noel_reveillon_elegant',
-      'cat_noel_repas_familial',
-      'cat_noel_chalet_cosy',
-      'cat_noel_pull_de_noel',
-      'cat_noel_noel_glamour'
-    ],
-  },
-  cat_plongee: {
-    label: "Activités aquatiques",
-    icon: "🤿",
-    keys: [
-      'cat_plongee_plongee_sous_marine',
-      'cat_plongee_snorkeling',
-      'cat_plongee_apnee',
-      'cat_plongee_surf',
-      'cat_plongee_paddle'
-    ],
-  },
-  cat_fitness: {
-    label: "Fitness & salle",
-    icon: "🏋️‍♀️",
-    keys: [
-      'cat_fitness_musculation',
-      'cat_fitness_cardio',
-      'cat_fitness_training_fonctionnel',
-      'cat_fitness_tenue_sportive_sobre',
-      'cat_fitness_ensemble_colore'
-    ],
-  },
-  cat_yoga: {
-    label: "Yoga & Pilates",
-    icon: "🧘‍♀️",
-    keys: [
-      'cat_yoga_minimaliste',
-      'cat_yoga_tons_naturels',
-      'cat_yoga_studio_elegant',
-      'cat_yoga_pratique_douce',
-      'cat_yoga_exterieur'
-    ],
-  },
-  cat_running: {
-    label: "Running",
-    icon: "🏃‍♀️",
-    keys: [
-      'cat_running_course_urbaine',
-      'cat_running_trail',
-      'cat_running_piste',
-      'cat_running_footing_hivernal',
-      'cat_running_course_estivale'
-    ],
-  },
-  cat_raquette: {
-    label: "Sports de raquette",
-    icon: "🎾",
-    keys: [
-      'cat_raquette_tennis_classique',
-      'cat_raquette_tennis_contemporain',
-      'cat_raquette_padel',
-      'cat_raquette_badminton',
-      'cat_raquette_squash'
-    ],
-  },
-  cat_velo: {
-    label: "Vélo & mobilité",
-    icon: "🚴‍♀️",
-    keys: [
-      'cat_velo_cyclisme_sur_route',
-      'cat_velo_vtt',
-      'cat_velo_gravel',
-      'cat_velo_velo_urbain',
-      'cat_velo_trajet_domicile_travail'
-    ],
-  },
-  cat_montagne: {
-    label: "Sports d’hiver",
-    icon: "⛷️",
-    keys: [
-      'cat_montagne_ski',
-      'cat_montagne_snowboard',
-      'cat_montagne_ski_de_fond',
-      'cat_montagne_raquettes',
-      'cat_montagne_apres_ski'
-    ],
-  },
-  cat_rando: {
-    label: "Randonnée",
-    icon: "🥾",
-    keys: [
-      'cat_rando_balade_nature',
-      'cat_rando_randonnee_estivale',
-      'cat_rando_trekking',
-      'cat_rando_camping',
-      'cat_rando_exploration_sous_la_pluie'
-    ],
-  },
-  cat_nautisme: {
-    label: "Nautisme",
-    icon: "⛵",
-    keys: [
-      'cat_nautisme_voile',
-      'cat_nautisme_croisiere',
-      'cat_nautisme_yacht_chic',
-      'cat_nautisme_marin_classique',
-      'cat_nautisme_promenade_cotiere'
-    ],
-  },
-  cat_equitation: {
-    label: "Équitation",
-    icon: "🐎",
-    keys: [
-      'cat_equitation_entrainement_equestre',
-      'cat_equitation_concours',
-      'cat_equitation_campagne_chic',
-      'cat_equitation_country',
-      'cat_equitation_western'
-    ],
-  },
-  cat_danse: {
-    label: "Danse",
-    icon: "💃",
-    keys: [
-      'cat_danse_danse_classique',
-      'cat_danse_contemporaine',
-      'cat_danse_hip_hop',
-      'cat_danse_salsa',
-      'cat_danse_tango'
-    ],
-  },
-  cat_festival: {
-    label: "Festivals",
-    icon: "🎪",
-    keys: [
-      'cat_festival_boheme',
-      'cat_festival_rock',
-      'cat_festival_electro',
-      'cat_festival_festival_sous_la_pluie'
-    ],
-  },
-  cat_mariage: {
-    label: "Mariage",
-    icon: "💍",
-    keys: [
-      'cat_mariage_marie_ou_mariee',
-      'cat_mariage_temoin',
-      'cat_mariage_cortege',
-      'cat_mariage_invite',
-      'cat_mariage_brunch_du_lendemain'
-    ],
-  },
-  cat_rendezvous: {
-    label: "Rendez-vous amoureux",
-    icon: "🌹",
-    keys: [
-      'cat_rendezvous_premier_cafe',
-      'cat_rendezvous_diner_romantique',
-      'cat_rendezvous_promenade',
-      'cat_rendezvous_soiree_elegante',
-      'cat_rendezvous_week_end_a_deux'
-    ],
-  },
-  cat_voyage: {
-    label: "Voyage",
-    icon: "✈️",
-    keys: [
-      'cat_voyage_avion_longue_distance',
-      'cat_voyage_train',
-      'cat_voyage_road_trip',
-      'cat_voyage_voyage_professionnel',
-      'cat_voyage_arrivee_en_station_balneaire'
-    ],
-  },
-  cat_maison: {
-    label: "Maison & détente",
-    icon: "🛋️",
-    keys: [
-      'cat_maison_loungewear',
-      'cat_maison_teletravail_confortable',
-      'cat_maison_dimanche_cosy',
-      'cat_maison_recevoir_chez_soi',
-      'cat_maison_tenue_de_nuit'
-    ],
-  },
-  cat_jardin: {
-    label: "Jardinage & bricolage",
-    icon: "🪴",
-    keys: [
-      'cat_jardin_jardinage_leger',
-      'cat_jardin_potager',
-      'cat_jardin_atelier_creatif',
-      'cat_jardin_peinture',
-      'cat_jardin_petit_bricolage'
-    ],
-  },
-  cat_culture: {
-    label: "Culture & sorties",
-    icon: "🎭",
-    keys: [
-      'cat_culture_musee',
-      'cat_culture_vernissage',
-      'cat_culture_theatre',
-      'cat_culture_opera',
-      'cat_culture_soiree_litteraire'
-    ],
-  },
-  cat_pro: {
-    label: "Événements pro",
-    icon: "💼",
-    keys: [
-      'cat_pro_entretien_d_embauche',
-      'cat_pro_conference',
-      'cat_pro_salon',
-      'cat_pro_presentation_sur_scene',
-      'cat_pro_cocktail_professionnel'
-    ],
-  },
-  cat_fete: {
-    label: "Fêtes à thème",
-    icon: "🥳",
-    keys: [
-      'cat_fete_halloween',
-      'cat_fete_carnaval',
-      'cat_fete_bal_masque',
-      'cat_fete_soiree_disco',
-      'cat_fete_soiree_retro'
-    ],
-  },
-  cat_grossesse: {
-    label: "Grossesse",
-    icon: "🤰",
-    keys: [
-      'cat_grossesse_quotidien_evolutif',
-      'cat_grossesse_bureau',
-      'cat_grossesse_ceremonie',
-      'cat_grossesse_detente',
-      'cat_grossesse_acces_pratique_pour_allaiter'
-    ],
-  },
-  cat_adapte: {
-    label: "Vêtements adaptés",
-    icon: "🦽",
-    keys: [
-      'cat_adapte_habillage_assis',
-      'cat_adapte_fermetures_faciles',
-      'cat_adapte_coupes_amples',
-      'cat_adapte_acces_aux_dispositifs_medicaux',
-      'cat_adapte_confort_sensoriel'
-    ],
-  },
-};
 const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({ 
   onGenerateOutfit, 
   isLoading, 
   numImagesToGenerate, 
   onNumImagesChange 
 }) => {
-  const { t } = useLocalization();
+  const { t, language } = useLocalization();
+  const fr = language === 'fr';
+  const [preferences, setPreferences] = useState<StylingPreferences>({});
   const [selectedOccasion, setSelectedOccasion] = useState<OccasionKey>('cat_noel_reveillon_elegant');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<StyleCategory>('cat_noel');
+  const [activeCategory, setActiveCategory] = useState<StyleCategory>('all');
 
   const filteredOccasions = useMemo(() => {
-    let list = activeCategory === 'all' 
-      ? CATEGORY_MAP.all.keys 
-      : CATEGORY_MAP[activeCategory].keys;
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      list = list.filter((key) => {
-        const translated = t(key).toLowerCase();
-        return translated.includes(q) || key.toLowerCase().includes(q);
+    let list: readonly OccasionKey[] = CATEGORY_MAP[activeCategory].keys;
+    const q = normalizeStyleSearch(searchQuery);
+    if (q) {
+      list = list.filter(key => {
+        const category = CATEGORY_MAP[getOccasionCategory(key)];
+        const haystack = normalizeStyleSearch(t(key) + ' ' + key + ' ' + category.label + ' ' + category.en);
+        return q.split(' ').every(term => haystack.includes(term));
       });
     }
 
@@ -307,9 +47,11 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onGenerateOutfit(selectedOccasion);
+    if (isLoading) return;
+    onGenerateOutfit(selectedOccasion, preferences);
   };
-  const currentOccasionLabel = t(selectedOccasion);
+  const selectedCategory = CATEGORY_MAP[getOccasionCategory(selectedOccasion)];
+  const currentOccasionLabel = (fr ? selectedCategory.label : selectedCategory.en) + ' — ' + t(selectedOccasion);
 
   return (
     <motion.div
@@ -329,7 +71,7 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
           </span>
         </div>
         <p className="text-xs text-stone-500">
-          Sélectionnez un univers ou une occasion parmi plus de 75 styles pour concevoir une tenue sur-mesure adaptée à votre morphologie.
+          {fr ? `Explorez ${occasionOptions.length} choix d’occasions, activités et styles. Personnalisez votre tenue selon vos préférences.` : `Explore ${occasionOptions.length} occasions, activities and styles. Personalize your outfit with your preferences.`}
         </p>
       </div>
 
@@ -338,7 +80,7 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
         {/* Catégories de styles en pilules horizontales */}
         <div className="space-y-2">
           <label className="block text-[11px] font-bold text-stone-600 uppercase tracking-wider">
-            Univers & Thèmes de Style
+            {fr ? 'Occasions, activités & styles' : 'Occasions, activities & styles'}
           </label>
           <div className="flex flex-wrap gap-1.5">
             {(Object.keys(CATEGORY_MAP) as StyleCategory[]).map((cat) => {
@@ -348,15 +90,22 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
                 <button
                   key={cat}
                   type="button"
-                  onClick={() => setActiveCategory(cat)}
+                  aria-pressed={isActive}
+                  onClick={() => {
+                    setActiveCategory(cat);
+                    setSearchQuery('');
+                    if (cat !== 'all' && !(CATEGORY_MAP[cat].keys as readonly OccasionKey[]).includes(selectedOccasion)) {
+                      setSelectedOccasion(CATEGORY_MAP[cat].keys[0]);
+                    }
+                  }}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                     isActive
                       ? 'bg-stone-950 text-white shadow-xs'
                       : 'bg-white text-stone-700 hover:bg-stone-50 border border-stone-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
                   }`}
                 >
-                  <span className="text-xs">{info.icon}</span>
-                  <span>{info.label}</span>
+                  
+                  <span>{fr ? info.label : info.en}</span>
                 </button>
               );
             })}
@@ -373,10 +122,11 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
           </div>
           <input
             type="text"
-            placeholder="Rechercher un style (ex: Gala, Plage, Mariage, Cocktail, Yacht...)"
+            aria-label={fr ? 'Rechercher dans les styles' : 'Search styles'}
+            placeholder={fr ? 'Rechercher : Noël, plongée, gala…' : 'Search: Christmas, diving, gala…'}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-white border border-rose-100/80 rounded-xl text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-300 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]"
+            onChange={(e) => { setSearchQuery(e.target.value); setActiveCategory('all'); }}
+            className="w-full pl-9 pr-16 py-2 bg-white border border-rose-100/80 rounded-xl text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-300 transition-all shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]"
           />
           {searchQuery && (
             <button
@@ -384,7 +134,7 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
               onClick={() => setSearchQuery('')}
               className="absolute inset-y-0 right-3 flex items-center text-xs text-stone-400 hover:text-stone-700"
             >
-              Effacer
+              {fr ? 'Effacer' : 'Clear'}
             </button>
           )}
         </div>
@@ -392,8 +142,8 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
         {/* Grille de sélection des styles disponibles */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium">
-            <span>Styles disponibles ({filteredOccasions.length})</span>
-            <span className="text-[10px] text-stone-400">Cliquez pour choisir</span>
+            <span>{fr ? 'Choix disponibles' : 'Available choices'} ({filteredOccasions.length})</span>
+            <span className="text-[10px] text-stone-400">{fr ? 'Cliquez pour choisir' : 'Click to select'}</span>
           </div>
 
           <div className="max-h-48 overflow-y-auto pr-1 grid grid-cols-2 gap-1.5 custom-scrollbar p-1.5 bg-gradient-to-b from-stone-50/50 to-white/50 rounded-xl border border-rose-100/60 shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)]">
@@ -405,6 +155,8 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
                   <button
                     key={key}
                     type="button"
+                    aria-pressed={isSelected}
+                    title={t(key)}
                     onClick={() => setSelectedOccasion(key)}
                     className={`flex items-center justify-between p-2.5 text-left rounded-lg text-xs transition-all ${
                       isSelected
@@ -414,9 +166,9 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
                         : 'bg-white hover:bg-stone-100 text-stone-800 border border-stone-200/70 font-medium'
                     }`}
                   >
-                    <div className="flex items-center gap-1.5 truncate mr-1">
+                    <div className="flex items-center gap-1.5 min-w-0 mr-1">
                       {isFavorite && <span className="text-[10px] text-amber-500 font-bold">★</span>}
-                      <span className="truncate">{t(key)}</span>
+                      <span className="break-words">{t(key)}</span>
                     </div>
                     {isSelected && (
                       <CheckCircleIcon className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
@@ -426,21 +178,53 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
               })
             ) : (
               <div className="col-span-2 py-4 text-center text-xs text-stone-500">
-                Aucun style ne correspond à « {searchQuery} ».
+                {fr ? "Aucun résultat pour" : "No results for"} « {searchQuery} ».
               </div>
             )}
           </div>
         </div>
 
+
+        <fieldset disabled={isLoading} className="space-y-3">
+          <legend className="text-xs font-bold text-stone-700 mb-2">{fr ? 'Personnalisation facultative' : 'Optional preferences'}</legend>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {(Object.keys(preferenceOptions) as (keyof typeof preferenceOptions)[]).map(field => (
+              <label key={field} className="text-xs text-stone-600 space-y-1">
+                <span>{({ aesthetic: fr ? 'Esthétique' : 'Aesthetic', season: fr ? 'Saison' : 'Season', setting: fr ? 'Lieu' : 'Setting' })[field]}</span>
+                <select className="w-full p-2 bg-white border border-stone-200 rounded-lg text-stone-900"
+                  value={preferences[field] || ''}
+                  onChange={event => setPreferences(prev => ({ ...prev, [field]: event.target.value }))}>
+                  <option value="">{fr ? 'Sans préférence' : 'No preference'}</option>
+                  {preferenceOptions[field].map(([labelFr, labelEn]) => (
+                    <option key={labelEn} value={labelFr}>{fr ? labelFr : labelEn}</option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+          <label className="block text-xs text-stone-600 space-y-1">
+            <span>{fr ? 'Couleurs, coupe, chaussures, matières, température ou besoins particuliers' : 'Colors, fit, footwear, materials, temperature or specific needs'}</span>
+            <textarea maxLength={500} rows={3} value={preferences.details || ''}
+              onChange={event => setPreferences(prev => ({ ...prev, details: event.target.value }))}
+              placeholder={fr ? 'Ex. : bleu marine, coupe ample, chaussures plates, sans laine.' : 'E.g. navy, loose fit, flat shoes, no wool.'}
+              className="w-full p-2 rounded-lg border border-stone-200 bg-white text-stone-900" />
+          </label>
+          <button type="button" className="text-xs underline text-stone-600"
+            onClick={() => { setPreferences({}); setSearchQuery(''); setActiveCategory('all'); setSelectedOccasion('cat_noel_reveillon_elegant'); }}>
+            {fr ? 'Réinitialiser les choix' : 'Reset choices'}
+          </button>
+        </fieldset>
+
         {/* Aperçu du style sélectionné */}
         <div className="p-3 bg-gradient-to-r from-emerald-50/50 to-rose-50/30 rounded-xl border border-emerald-100/80 flex items-center justify-between shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
           <div>
             <div className="text-[10px] font-bold text-emerald-800/70 uppercase tracking-wider">
-              Style sélectionné
+              {fr ? 'Sélection complète' : 'Full selection'}
             </div>
             <div className="text-sm font-bold text-stone-950">
               {currentOccasionLabel}
             </div>
+            <p className="text-xs text-stone-600 whitespace-pre-wrap break-words">{Object.values(preferences).filter(Boolean).join(' · ')}</p>
           </div>
           <div className="w-8 h-8 rounded-full bg-white shadow-xs border border-emerald-200/80 flex items-center justify-center text-emerald-600">
             <SparklesIcon className="w-4 h-4" />
@@ -488,7 +272,7 @@ const OccasionStylingPanel: React.FC<OccasionStylingPanelProps> = ({
             <div className="relative z-10 flex items-center justify-center gap-2">
               <SparklesIcon className="w-4 h-4 text-amber-300 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-xs uppercase tracking-wider">
-                Générer le look : {currentOccasionLabel}
+                {fr ? 'Générer le look' : 'Generate outfit'} : {currentOccasionLabel}
               </span>
             </div>
           )}
