@@ -1,0 +1,10 @@
+{
+  "name": "Dressing Virtuel Pixelprod",
+  "description": "Cabine d'essayage virtuelle & dressing intelligent. Générateur de tenues dans tous les styles.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

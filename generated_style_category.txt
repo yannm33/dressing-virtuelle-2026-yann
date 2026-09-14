@@ -1,0 +1,1 @@
+'all' | 'cat_noel' | 'cat_plongee' | 'cat_fitness' | 'cat_yoga' | 'cat_running' | 'cat_raquette' | 'cat_velo' | 'cat_montagne' | 'cat_rando' | 'cat_nautisme' | 'cat_equitation' | 'cat_danse' | 'cat_festival' | 'cat_mariage' | 'cat_rendezvous' | 'cat_voyage' | 'cat_maison' | 'cat_jardin' | 'cat_culture' | 'cat_pro' | 'cat_fete' | 'cat_grossesse' | 'cat_adapte'

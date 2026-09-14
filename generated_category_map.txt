@@ -1,0 +1,257 @@
+  all: {
+    label: "Tous les styles",
+    icon: "✨",
+    keys: [...occasionOptions],
+  },
+  cat_noel: {
+    label: "Noël & fêtes",
+    icon: "🎄",
+    keys: [
+      'cat_noel_reveillon_elegant',
+      'cat_noel_repas_familial',
+      'cat_noel_chalet_cosy',
+      'cat_noel_pull_de_noel',
+      'cat_noel_noel_glamour'
+    ],
+  },
+  cat_plongee: {
+    label: "Activités aquatiques",
+    icon: "🤿",
+    keys: [
+      'cat_plongee_plongee_sous_marine',
+      'cat_plongee_snorkeling',
+      'cat_plongee_apnee',
+      'cat_plongee_surf',
+      'cat_plongee_paddle'
+    ],
+  },
+  cat_fitness: {
+    label: "Fitness & salle",
+    icon: "🏋️‍♀️",
+    keys: [
+      'cat_fitness_musculation',
+      'cat_fitness_cardio',
+      'cat_fitness_training_fonctionnel',
+      'cat_fitness_tenue_sportive_sobre',
+      'cat_fitness_ensemble_colore'
+    ],
+  },
+  cat_yoga: {
+    label: "Yoga & Pilates",
+    icon: "🧘‍♀️",
+    keys: [
+      'cat_yoga_minimaliste',
+      'cat_yoga_tons_naturels',
+      'cat_yoga_studio_elegant',
+      'cat_yoga_pratique_douce',
+      'cat_yoga_exterieur'
+    ],
+  },
+  cat_running: {
+    label: "Running",
+    icon: "🏃‍♀️",
+    keys: [
+      'cat_running_course_urbaine',
+      'cat_running_trail',
+      'cat_running_piste',
+      'cat_running_footing_hivernal',
+      'cat_running_course_estivale'
+    ],
+  },
+  cat_raquette: {
+    label: "Sports de raquette",
+    icon: "🎾",
+    keys: [
+      'cat_raquette_tennis_classique',
+      'cat_raquette_tennis_contemporain',
+      'cat_raquette_padel',
+      'cat_raquette_badminton',
+      'cat_raquette_squash'
+    ],
+  },
+  cat_velo: {
+    label: "Vélo & mobilité",
+    icon: "🚴‍♀️",
+    keys: [
+      'cat_velo_cyclisme_sur_route',
+      'cat_velo_vtt',
+      'cat_velo_gravel',
+      'cat_velo_velo_urbain',
+      'cat_velo_trajet_domicile_travail'
+    ],
+  },
+  cat_montagne: {
+    label: "Sports d’hiver",
+    icon: "⛷️",
+    keys: [
+      'cat_montagne_ski',
+      'cat_montagne_snowboard',
+      'cat_montagne_ski_de_fond',
+      'cat_montagne_raquettes',
+      'cat_montagne_apres_ski'
+    ],
+  },
+  cat_rando: {
+    label: "Randonnée",
+    icon: "🥾",
+    keys: [
+      'cat_rando_balade_nature',
+      'cat_rando_randonnee_estivale',
+      'cat_rando_trekking',
+      'cat_rando_camping',
+      'cat_rando_exploration_sous_la_pluie'
+    ],
+  },
+  cat_nautisme: {
+    label: "Nautisme",
+    icon: "⛵",
+    keys: [
+      'cat_nautisme_voile',
+      'cat_nautisme_croisiere',
+      'cat_nautisme_yacht_chic',
+      'cat_nautisme_marin_classique',
+      'cat_nautisme_promenade_cotiere'
+    ],
+  },
+  cat_equitation: {
+    label: "Équitation",
+    icon: "🐎",
+    keys: [
+      'cat_equitation_entrainement_equestre',
+      'cat_equitation_concours',
+      'cat_equitation_campagne_chic',
+      'cat_equitation_country',
+      'cat_equitation_western'
+    ],
+  },
+  cat_danse: {
+    label: "Danse",
+    icon: "💃",
+    keys: [
+      'cat_danse_danse_classique',
+      'cat_danse_contemporaine',
+      'cat_danse_hip_hop',
+      'cat_danse_salsa',
+      'cat_danse_tango'
+    ],
+  },
+  cat_festival: {
+    label: "Festivals",
+    icon: "🎪",
+    keys: [
+      'cat_festival_boheme',
+      'cat_festival_rock',
+      'cat_festival_electro',
+      'cat_festival_festival_sous_la_pluie'
+    ],
+  },
+  cat_mariage: {
+    label: "Mariage",
+    icon: "💍",
+    keys: [
+      'cat_mariage_marie_ou_mariee',
+      'cat_mariage_temoin',
+      'cat_mariage_cortege',
+      'cat_mariage_invite',
+      'cat_mariage_brunch_du_lendemain'
+    ],
+  },
+  cat_rendezvous: {
+    label: "Rendez-vous amoureux",
+    icon: "🌹",
+    keys: [
+      'cat_rendezvous_premier_cafe',
+      'cat_rendezvous_diner_romantique',
+      'cat_rendezvous_promenade',
+      'cat_rendezvous_soiree_elegante',
+      'cat_rendezvous_week_end_a_deux'
+    ],
+  },
+  cat_voyage: {
+    label: "Voyage",
+    icon: "✈️",
+    keys: [
+      'cat_voyage_avion_longue_distance',
+      'cat_voyage_train',
+      'cat_voyage_road_trip',
+      'cat_voyage_voyage_professionnel',
+      'cat_voyage_arrivee_en_station_balneaire'
+    ],
+  },
+  cat_maison: {
+    label: "Maison & détente",
+    icon: "🛋️",
+    keys: [
+      'cat_maison_loungewear',
+      'cat_maison_teletravail_confortable',
+      'cat_maison_dimanche_cosy',
+      'cat_maison_recevoir_chez_soi',
+      'cat_maison_tenue_de_nuit'
+    ],
+  },
+  cat_jardin: {
+    label: "Jardinage & bricolage",
+    icon: "🪴",
+    keys: [
+      'cat_jardin_jardinage_leger',
+      'cat_jardin_potager',
+      'cat_jardin_atelier_creatif',
+      'cat_jardin_peinture',
+      'cat_jardin_petit_bricolage'
+    ],
+  },
+  cat_culture: {
+    label: "Culture & sorties",
+    icon: "🎭",
+    keys: [
+      'cat_culture_musee',
+      'cat_culture_vernissage',
+      'cat_culture_theatre',
+      'cat_culture_opera',
+      'cat_culture_soiree_litteraire'
+    ],
+  },
+  cat_pro: {
+    label: "Événements pro",
+    icon: "💼",
+    keys: [
+      'cat_pro_entretien_d_embauche',
+      'cat_pro_conference',
+      'cat_pro_salon',
+      'cat_pro_presentation_sur_scene',
+      'cat_pro_cocktail_professionnel'
+    ],
+  },
+  cat_fete: {
+    label: "Fêtes à thème",
+    icon: "🥳",
+    keys: [
+      'cat_fete_halloween',
+      'cat_fete_carnaval',
+      'cat_fete_bal_masque',
+      'cat_fete_soiree_disco',
+      'cat_fete_soiree_retro'
+    ],
+  },
+  cat_grossesse: {
+    label: "Grossesse",
+    icon: "🤰",
+    keys: [
+      'cat_grossesse_quotidien_evolutif',
+      'cat_grossesse_bureau',
+      'cat_grossesse_ceremonie',
+      'cat_grossesse_detente',
+      'cat_grossesse_acces_pratique_pour_allaiter'
+    ],
+  },
+  cat_adapte: {
+    label: "Vêtements adaptés",
+    icon: "🦽",
+    keys: [
+      'cat_adapte_habillage_assis',
+      'cat_adapte_fermetures_faciles',
+      'cat_adapte_coupes_amples',
+      'cat_adapte_acces_aux_dispositifs_medicaux',
+      'cat_adapte_confort_sensoriel'
+    ],
+  },
